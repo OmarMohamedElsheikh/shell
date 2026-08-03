@@ -4,8 +4,7 @@
 
 int main(int argc, char *argv[]) {
   char command[30];
-  char *exit_shell[15];
-  *exit_shell = "exit";
+
 
   while(1){
 	  // Flush after every printf
@@ -13,13 +12,22 @@ int main(int argc, char *argv[]) {
 
 	  printf("$ ");
 
-	  scanf("%s" , &command);
+	  fgets(command , sizeof(command), stdin);
 
-	  if(!(strcmp(command, *exit_shell))){
+	  size_t len = strlen(command);
+	  if (len > 0 && command[len -1] == '\n'){
+	  	command[len - 1] = '\0';
+	  }
+
+	  if(!(strcmp(command, "exit"))){
 	  	break;
 	  };
 
+	  if (strncmp(command, "echo ", 5) == 0) {
+	      printf("%s\n", command + 5);
+	  }else{
 	  printf("%s: command not found\n", command);
+	  }
 	};
   return 0;
 }
