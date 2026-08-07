@@ -93,9 +93,9 @@ int main(int argc, char *argv[]) {
 	  	if (contains(builtins , size , start+5)){
 	  		printf("%s is a shell builtin\n", start+5);
 	  	}else{
-	  		char *full_path = find_in_path(cmd , path_env);
+	  		char *full_path = find_in_path(start+5 , path_env);
 	  		if (full_path != NULL){
-	  			printf("%s is %s\n", cmd, full_path);
+	  			printf("%s is %s\n", start+5, full_path);
 	  			free(full_path);
 	  		}else{
 	  		printf("%s: not found\n", start+5);
