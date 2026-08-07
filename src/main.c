@@ -2,6 +2,18 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <unistd.h>
+
+
+
+#ifdef _WIN32
+	#define PATH_SEP_CHAR ';'
+	#define PATH_SEP_STR ';'
+#else 
+	#define PATH_SEP_CHAR ':'
+	#define PATH_SEP_STR ':'
+#endif
+
 
 char *builtins[] = {"echo", "exit" , "type"};
 
@@ -14,30 +26,63 @@ int contains(char *arr[], int size, const char *target) {
 }
 
 
+char *find_in_path(const char *cmd, const char *path_env){
+	if (path_env == NULL || *cmd == '\0' || cmd == NULL){
+		return NULL;
+	}
+	const char *p = path_env;
+    while (*p) {
+      const char *end = strchr(p, PATH_SEP_CHAR);
+      if (end == NULL) end = p + strlen(p);
+      size_t dir_len = end - p;
+      char *full_path = malloc(dir_len+sizeof(cmd)+2);
+      if (full_path == NULL){
+      	return NULL;
+      }
+      
+      memcpy(full_path,p,dir_len);
+      full_path[dir_len] = '/';
+      strcpy(full_path+dir_len+1,cmd);
+
+	  if (access(full_path,X_OK) == 0){
+	  	return full_path;
+	  }
+	  free(full_path);
+      
+      p = end;
+      if (*p) p++;  
+  }
+  return NULL;
+}
+
+
 int main(int argc, char *argv[]) {
-  char command[30];
+
+
+  
+
+  setbuf(stdout, NULL);
+
+   const char *path_env = getenv("PATH");
+   if (path_env == NULL) {
+       path_env = "/bin:/usr/bin";
+   }
+   char command[256];
 
 
   while(1){
-	  // Flush after every printf
-	  setbuf(stdout, NULL);
 
 	  printf("$ ");
 
 	  fgets(command , sizeof(command), stdin);
 
-	  size_t len = strlen(command);
-	  if (len > 0 && command[len -1] == '\n'){
-	  	command[len - 1] = '\0';
-	  }
-
 	  char *start = command;
 	  while (isspace((unsigned char)*start))
 	      start++;
 	  
-	  size_t lenc = strlen(start);
-	  while (len > 0 && isspace((unsigned char)start[lenc - 1]))
-	      start[--lenc] = '\0';
+	  size_t len = strlen(start);
+	  while (len > 0 && isspace((unsigned char)start[len - 1]))
+	      start[--len] = '\0';
 	      
 	  if(!(strcmp(start, "exit"))){
 	  	break;
@@ -48,7 +93,13 @@ int main(int argc, char *argv[]) {
 	  	if (contains(builtins , size , start+5)){
 	  		printf("%s is a shell builtin\n", start+5);
 	  	}else{
+	  		char *full_path = find_in_path(cmd , path_env);
+	  		if (full_path != NULL){
+	  			printf("%s is %s\n", cmd, full_path);
+	  			free(full_path);
+	  		}else{
 	  		printf("%s: not found\n", start+5);
+	  		}
 	  	}
 	  }else{
 	  printf("%s: command not found\n", start);
