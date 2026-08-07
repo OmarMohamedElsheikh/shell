@@ -35,7 +35,7 @@ char *find_in_path(const char *cmd, const char *path_env){
       const char *end = strchr(p, PATH_SEP_CHAR);
       if (end == NULL) end = p + strlen(p);
       size_t dir_len = end - p;
-      char *full_path = malloc(dir_len+sizeof(cmd)+2);
+      char *full_path = malloc(dir_len+strlen(cmd)+2);
       if (full_path == NULL){
       	return NULL;
       }
