@@ -118,13 +118,15 @@ int main(int argc, char *argv[]) {
 	  if (full_path != NULL){
 	  char *args[10];
 	  int i = 0;
-	  	while(cmd && i < 10){
+	  	while(cmd != NULL && i < 10){
 	  		args[argc++] = cmd;
 	  		cmd = strtok(NULL, "");
 	  	}
-	  	args[i] = NULL;
+	  	args[i++] = NULL;
 	  	
 	  	execute(full_path , args);
+
+	  	free(full_path);
 	  }else{
 	  printf("%s: command not found\n", start);
 	  }}
