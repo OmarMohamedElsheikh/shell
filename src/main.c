@@ -25,6 +25,18 @@ int contains(char *arr[], int size, const char *target) {
     return 0;           
 }
 
+int execute(const char *full_path , char *args[]){
+	pid_t p = fork();
+	if(p<0){
+		perror("fork fail");
+		return 1;
+	}else if(p == 0){
+		execv(full_path, args);
+		return 0;
+	}
+	return 1;
+}
+
 
 char *find_in_path(const char *cmd, const char *path_env){
 	if (path_env == NULL || *cmd == '\0' || cmd == NULL){
@@ -59,8 +71,6 @@ char *find_in_path(const char *cmd, const char *path_env){
 int main(int argc, char *argv[]) {
 
 
-  
-
   setbuf(stdout, NULL);
 
    const char *path_env = getenv("PATH");
@@ -68,6 +78,7 @@ int main(int argc, char *argv[]) {
        path_env = "/bin:/usr/bin";
    }
    char command[256];
+   char *args[10];
 
 
   while(1){
@@ -102,8 +113,17 @@ int main(int argc, char *argv[]) {
 	  		}
 	  	}
 	  }else{
+	  char *cmd = strtok(start," ");
+	  char *full_path = find_in_path(cmd,path_env);
+	  if (full_path != NULL){
+	  int i = 0;
+	  	while(cmd && i < 10){
+	  		args[argc++] = cmd;
+	  		cmd = strtok(NULL, "");
+	  	}
+	  }else{
 	  printf("%s: command not found\n", start);
-	  }
+	  }}
 	};
   return 0;
 }
