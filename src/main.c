@@ -78,8 +78,6 @@ int main(int argc, char *argv[]) {
        path_env = "/bin:/usr/bin";
    }
    char command[256];
-   char *args[10];
-
 
   while(1){
 
@@ -116,11 +114,13 @@ int main(int argc, char *argv[]) {
 	  char *cmd = strtok(start," ");
 	  char *full_path = find_in_path(cmd,path_env);
 	  if (full_path != NULL){
+	  char *args[10];
 	  int i = 0;
 	  	while(cmd && i < 10){
 	  		args[argc++] = cmd;
 	  		cmd = strtok(NULL, "");
 	  	}
+	  	execute(full_path , args);
 	  }else{
 	  printf("%s: command not found\n", start);
 	  }}
