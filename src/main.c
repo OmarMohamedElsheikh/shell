@@ -3,7 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <unistd.h>
-
+#include <sys/wait.h>
 
 
 #ifdef _WIN32
@@ -33,6 +33,8 @@ int execute(const char *full_path , char *args[]){
 	}else if(p == 0){
 		execv(full_path, args);
 		return 0;
+	}else{
+		wait(NULL);
 	}
 	return 1;
 }
@@ -120,6 +122,8 @@ int main(int argc, char *argv[]) {
 	  		args[argc++] = cmd;
 	  		cmd = strtok(NULL, "");
 	  	}
+	  	args[i] = NULL;
+	  	
 	  	execute(full_path , args);
 	  }else{
 	  printf("%s: command not found\n", start);
