@@ -15,7 +15,7 @@
 #endif
 
 
-char *builtins[] = {"echo", "exit" , "type" , "pwd"};
+char *builtins[] = {"echo", "exit" , "type", "pwd" };
 
 int contains(char *arr[], int size, const char *target) {
     for (int i = 0; i < size; i++) {
