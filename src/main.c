@@ -32,6 +32,7 @@ int execute(const char *full_path , char *args[]){
 		return 1;
 	}else if(p == 0){
 		execv(full_path, args);
+		perror("execv");
 		return 0;
 	}else{
 		wait(NULL);
@@ -118,11 +119,11 @@ int main(int argc, char *argv[]) {
 	  if (full_path != NULL){
 	  char *args[10];
 	  int i = 0;
-	  	while(cmd != NULL && i < 10){
-	  		args[argc++] = cmd;
-	  		cmd = strtok(NULL, "");
+	  	while(cmd != NULL && i < 9){
+	  		args[i++] = cmd;
+	  		cmd = strtok(NULL, " ");
 	  	}
-	  	args[i++] = NULL;
+	  	args[i] = NULL;
 	  	
 	  	execute(full_path , args);
 
